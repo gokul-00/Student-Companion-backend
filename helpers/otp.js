@@ -4,12 +4,11 @@ function checkOtpValid(user) {
   // All in seconds
   const currentTime = Date.now() / 1000;
   const lastUpdate = Number(user.verification.updatedAt) / 1000;
-  const timeLimit = 119;
+  const timeLimit = 600;
   return currentTime - lastUpdate < timeLimit;
 }
 
 function sendOtp(mobileNo, otp) {
-
   let raw = JSON.stringify({
     to: '91' + String(mobileNo),
     content: `OTP for signing into student companion is ${otp}`,
@@ -19,7 +18,7 @@ function sendOtp(mobileNo, otp) {
   var requestOptions = {
     method: 'POST',
     headers: {
-      'Authorization': 'Basic d2J0cDU4NjA6dDViSmEycWE=',
+      Authorization: 'Basic d2J0cDU4NjA6dDViSmEycWE=',
       'Content-Type': 'application/json',
     },
     body: raw,
