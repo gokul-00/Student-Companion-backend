@@ -4,7 +4,11 @@ const postSchema = Schema({
     title: String,
     message: String,
     tags: [String],
-    creator: String,
+    creator: {
+        type: Schema.Types.ObjectId,
+		ref: 'User',
+    },
+    Public: Boolean,
     voteCount: {
         type: Number,
         default: 0,

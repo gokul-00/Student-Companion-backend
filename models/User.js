@@ -15,3 +15,15 @@ const UserSchema = Schema({
 });
 
 module.exports = model('User', UserSchema);
+
+/*
+User model requirements : 
+  name
+  email
+  password
+  memberAt : [{
+    communityid
+    isAdmin
+  }]
+  post : [ postID ]
+*/
