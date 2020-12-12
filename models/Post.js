@@ -15,15 +15,13 @@ const postSchema = Schema({
 		},
 	],
 	public: Boolean,
-	voteCount: {
-		Voters: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: 'User',
-			},
-		],
-		count: { type: Number, default: 0 },
-	},
+	voteCount: Number,
+	voters: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'User',
+		},
+	],
 	createdAt: {
 		type: Date,
 		default: new Date(),

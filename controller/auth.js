@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const auth = require('express').Router();
 const otpGenerator = require('otp-generator');
 const User = require('../models/User.js');
@@ -80,7 +79,7 @@ auth.post('/login', async (req, res) => {
 		}
 		console.log(otp, user.verification.otp, checkOtpValid(user));
 
-		if (otp != user.verification.otp && checkOtpValid(user)) {
+		if (otp !== user.verification.otp && checkOtpValid(user)) {
 			return res.status(400).json({ message: 'Invalid OTP' });
 		}
 		return res.status(403).json({ message: 'OTP expired' });

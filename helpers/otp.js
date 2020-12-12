@@ -9,13 +9,13 @@ function checkOtpValid(user) {
 }
 
 function sendOtp(mobileNo, otp) {
-	let raw = JSON.stringify({
-		to: '91' + String(mobileNo),
+	const raw = JSON.stringify({
+		to: `91${String(mobileNo)}`,
 		content: `OTP for signing into student companion is ${otp}`,
 		from: 'SMSINFO',
 	});
 
-	var requestOptions = {
+	const requestOptions = {
 		method: 'POST',
 		headers: {
 			Authorization: 'Basic d2J0cDU4NjA6dDViSmEycWE=',

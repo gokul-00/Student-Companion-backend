@@ -9,6 +9,6 @@
       "object-shorthand": "off",
       "class-methods-use-this": "off",
       "no-console":"off",
-      "prefer-destructuring":"off",
+      "prefer-destructuring":"off"
     }
 }

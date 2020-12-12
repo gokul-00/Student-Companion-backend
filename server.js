@@ -13,6 +13,7 @@ app.use(cors());
 
 app.use('/posts', require('./controller/post'));
 app.use('/auth', require('./controller/auth'));
+
 const PORT = process.env.PORT;
 
 mongoose

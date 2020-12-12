@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema } = require('mongoose');
 
 const CommunitySchema = new Schema({
 	name: {
@@ -24,3 +24,4 @@ const CommunitySchema = new Schema({
 		},
 	],
 });
+module.exports = CommunitySchema;

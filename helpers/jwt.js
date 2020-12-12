@@ -4,8 +4,9 @@ const createJWTtoken = async (user) => {
 	return jwt.sign(
 		{
 			name: user.name,
+			// eslint-disable-next-line no-underscore-dangle
 			id: user._id,
-			mobileNo: user.mobileNo,
+			userId: user.userId,
 		},
 		process.env.TOKEN_SECRET,
 		{ expiresIn: '720h' }
@@ -29,7 +30,7 @@ const jwtVerify = (req, res, next) => {
 		});
 		return null;
 	} catch (err) {
-		console.log(err);
+		console.log(err.message);
 		return res
 			.status(500)
 			.json({ message: 'Server error. Try again later' });

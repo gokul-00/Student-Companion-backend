@@ -80,13 +80,13 @@ post.post('/createPost', async (req, res) => {
 
 post.get('/updatePost/:id', async (req, res) => {
 	const { id } = req.params;
-	let creator = req.jwt_payload.id;
+	const creator = req.jwt_payload.id;
 	const { title, message, tags } = req.body;
 	if (!mongoose.Types.ObjectId.isValid(id))
 		return res.status(404).send(`Enter proper Id`);
 	try {
 		const updatedPost = { creator, title, message, tags, _id: id };
-		let result = await Post.findOneAndUpdate(
+		const result = await Post.findOneAndUpdate(
 			{ _id: id, creator: creator },
 			updatedPost,
 			{ new: true }
@@ -113,14 +113,14 @@ post.get('/deletePost/:id', async (req, res) => {
 
 post.get('/votePost/:id', async (req, res) => {
 	const { id } = req.params;
-	var userId = req.jwt_payload.id;
+	const userId = req.jwt_payload.id;
 	if (
 		!mongoose.Types.ObjectId.isValid(id) ||
 		!mongoose.Types.ObjectId.isValid(userId)
 	)
 		return res.status(404).json({ message: `Enter proper Id` });
-	let posts = await Post.findById(id);
-	if ((await Post.findOne({ _id: id, creator: creator })) != null) {
+	const posts = await Post.findById(id);
+	if ((await Post.findOne({ _id: id, creator: userId })) != null) {
 		await Post.findByIdAndUpdate(
 			id,
 			{ voteCount: posts.voteCount - 1, $pull: { voters: userId } },
@@ -132,8 +132,6 @@ post.get('/votePost/:id', async (req, res) => {
 		{ voteCount: posts.voteCount + 1, $push: { voters: userId } },
 		{ new: true }
 	);
-
-	console.log(updatedPost);
 	return res.status(200).json({ message: 'Success' });
 });
 
