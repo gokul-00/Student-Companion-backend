@@ -28,4 +28,4 @@ const postSchema = Schema({
 	},
 });
 
-module.exports = model('PostMessage', postSchema);
+module.exports = model('Post', postSchema);

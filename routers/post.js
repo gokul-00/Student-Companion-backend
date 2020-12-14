@@ -4,32 +4,40 @@ const Post = require('../models/Post.js');
 const User = require('../models/User');
 const Community = require('../models/Community');
 
-post.get('/getPublicPosts', async (req, res) => {
+post.get('/publicPosts', async (req, res) => {
 	try {
-		const posts = await Post.findAll({ Public: true });
+		const posts = await Post.find({ public: true });
+		console.log(posts);
 		return res.status(200).json(posts);
 	} catch (error) {
 		console.log(error.message);
 		return res.status(404).json({ message: error.message });
 	}
 });
-post.get('/getCommunityPosts', async (req, res) => {
+post.get('/communityPosts', async (req, res) => {
 	try {
 		const userid = req.jwt_payload.id;
 		if (!mongoose.Types.ObjectId.isValid(userid))
 			return res.status(400).json({ message: 'Improper id' });
-		const { community } = await User.findById(userid);
-		let posts;
+		const community = await Community.find({
+			$or: [{ members: userid }, { creator: userid }],
+		});
+		console.log(community);
+		let posts = [];
 		for (let i = 0; i < community.length; i += 1) {
-			const result = Post.findAll({
-				Public: false,
-				community: community[i],
+			// eslint-disable-next-line no-await-in-loop
+			const result = await Post.find({
+				public: false,
+				// eslint-disable-next-line no-underscore-dangle
+				community: community[i]._id,
 			});
 			posts.push({
 				post: result,
-				community: community[i],
+				// eslint-disable-next-line no-underscore-dangle
+				community: community[i]._id,
 			});
 		}
+		console.log(posts);
 		return res.status(200).json(posts);
 	} catch (error) {
 		console.log(error.message);
@@ -51,33 +59,46 @@ post.get('/getCommunityPosts', async (req, res) => {
 post.post('/createPost', async (req, res) => {
 	try {
 		let creator = req.jwt_payload.id;
-		const { title, message, tags, Public, anonymous } = req.body;
+		const { title, message, tags, public, anonymous } = req.body;
 		if (anonymous) creator = '507f1f77bcf86cd799439011'; // for anonymous create a random entry with
 		if (!title || !message || !creator)
 			return res.status(404).json('Fill all fields');
 		if (!mongoose.Types.ObjectId.isValid(creator))
 			return res.status(404).send(`Enter proper Id`);
-		if (!Public) {
-			const { community } = req.body;
+		if (!public) {
+			const { communityId } = req.body;
+			if (communityId == null)
+				return res.status(404).json('Fill all fields');
+			// eslint-disable-next-line no-underscore-dangle
+			const communityObjId = (await Community.findOne({ communityId }))
+				._id;
 			const newPostMessage = new Post({
 				title,
 				message,
 				creator,
 				tags,
-				Public,
-				community,
+				public,
+				community: communityObjId,
 			});
 			await newPostMessage.save();
-			await Community.findByIdAndUpdate(community, {
-				$push: { posts: title },
+			// eslint-disable-next-line no-underscore-dangle
+			const id = (await Post.findOne(newPostMessage))._id;
+			await Community.findByIdAndUpdate(communityObjId, {
+				$push: { posts: id },
 			});
 			return res.status(201).json(newPostMessage);
 		}
-		const newPostMessage = new Post({ title, message, creator, tags });
+		const newPostMessage = new Post({
+			title,
+			message,
+			creator,
+			tags,
+			public,
+		});
 		await newPostMessage.save();
 		return res.status(201).json(newPostMessage);
 	} catch (err) {
-		console.log(err.message);
+		console.log(err);
 		return res.status(404).json('Server error. Try again later');
 	}
 });

@@ -2,8 +2,9 @@ const { Schema, model } = require('mongoose');
 
 const UserSchema = Schema({
 	name: String,
-	_id: String,
-	mobileNo: Number,
+	Email: String,
+	Password: String,
+	Hash: String,
 	registered: {
 		type: Boolean,
 		Default: false,
