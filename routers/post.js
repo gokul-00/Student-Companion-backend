@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const post = require('express').Router();
 const Post = require('../models/Post.js');
 const User = require('../models/User');
+const Community = require('../models/Community');
 
 post.get('/getPublicPosts', async (req, res) => {
 	try {
@@ -56,7 +57,7 @@ post.post('/createPost', async (req, res) => {
 			return res.status(404).json('Fill all fields');
 		if (!mongoose.Types.ObjectId.isValid(creator))
 			return res.status(404).send(`Enter proper Id`);
-		if (Public) {
+		if (!Public) {
 			const { community } = req.body;
 			const newPostMessage = new Post({
 				title,
@@ -67,6 +68,9 @@ post.post('/createPost', async (req, res) => {
 				community,
 			});
 			await newPostMessage.save();
+			await Community.findByIdAndUpdate(community, {
+				$push: { posts: title },
+			});
 			return res.status(201).json(newPostMessage);
 		}
 		const newPostMessage = new Post({ title, message, creator, tags });
