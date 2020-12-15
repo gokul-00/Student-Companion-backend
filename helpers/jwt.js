@@ -1,12 +1,12 @@
 const jwt = require('jsonwebtoken');
 
-const createJWTtoken = async (user) => {
+const createJWTtoken = (user) => {
 	return jwt.sign(
 		{
-			name: user.name,
+			name: user.Name,
 			// eslint-disable-next-line no-underscore-dangle
 			id: user._id,
-			userId: user.userId,
+			email: user.Email,
 		},
 		process.env.TOKEN_SECRET,
 		{ expiresIn: '720h' }
