@@ -75,7 +75,7 @@ auth.post('/login', async (req, res) => {
 		if (user == null) {
 			return res.status(404).json({ message: 'User not found' });
 		}
-		const matched = bcrypt.compare(Password, user.Password);
+		const matched = await bcrypt.compare(Password, user.Password);
 		if (matched) {
 			const token = createJWTtoken(user);
 			return res.status(200).json({
@@ -102,10 +102,12 @@ auth.post('/register', async (req, res) => {
 		const existing = await User.findOne({ Email });
 		if (existing !== null)
 			return res.status(409).json({ message: 'User already exists' });
+		const salt = await bcrypt.genSalt(10);
+		const hash = await bcrypt.hash(Password, salt);
 		const user = await User.create({
 			Name,
 			Email,
-			Password: bcrypt.hashSync(Password),
+			Password: hash,
 		});
 		const token = await createJWTtoken(user);
 		return res.status(200).json({
