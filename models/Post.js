@@ -2,12 +2,13 @@ const { Schema, model } = require('mongoose');
 
 const postSchema = Schema({
 	title: String,
-	message: String,
+	description: String,
 	tags: [String],
 	creator: {
 		type: Schema.Types.ObjectId,
 		ref: 'User',
 	},
+	image: Buffer,
 	community: [
 		{
 			type: Schema.Types.ObjectId,
@@ -15,7 +16,6 @@ const postSchema = Schema({
 		},
 	],
 	public: Boolean,
-	voteCount: Number,
 	voters: [
 		{
 			type: Schema.Types.ObjectId,

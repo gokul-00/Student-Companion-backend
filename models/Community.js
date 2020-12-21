@@ -16,7 +16,6 @@ const CommunitySchema = new Schema({
 			ref: 'User',
 		},
 	],
-	communityId: String,
 	posts: [
 		{
 			type: Schema.Types.ObjectId,
