@@ -6,6 +6,26 @@ const User = require('../models/User');
 const Community = require('../models/Community');
 const Post = require('../models/Post');
 
+community.get('/', async (req,res) => {
+	try {
+		const userID = req.jwt_payload.id;
+		if (!mongoose.Types.ObjectId.isValid(userID))
+			return res.status(400).json({ message: 'Improper ID' });
+		const communities = await Community.find({ members: userID })
+			.lean()
+			.exec();
+		const response = communities.map((item) => ({
+			id: item._id,
+			communityName: item.name,
+			isAdmin: item.admin.equals(userID),
+		}));
+		return res.status(200).json({ message: 'success', data: response });
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ message: 'server error' });
+	}
+})
+
 community.get('/:id', async (req, res) => {
 	try {
 		const communityId = req.params.id;
