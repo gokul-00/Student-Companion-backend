@@ -54,6 +54,7 @@ community.post('/join', async (req, res) => {
 						.json({ message: 'Community not found' });
 				}
 			);
+			return res.status(400).json({ message: 'Community not found' });
 		} catch (err) {
 			return res.status(400).json({ message: 'Record does not exist' });
 		}
@@ -81,6 +82,7 @@ community.post('/leave', async (req, res) => {
 				return res.status(400).json({ message: 'Community not found' });
 			}
 		);
+		return res.status(400).json({ message: 'Community not found' });
 	} catch (err) {
 		console.log(err.message);
 		return res
