@@ -68,5 +68,31 @@ notes.post('/set_time', async (req, res) => {
 	}
 });
 
-notes.post('/update', async (req, res) => {});
+notes.post('/update', async (req, res) => {
+	try {
+		const { content, noteId } = req.body;
+		const userId = req.jwt_payload.id;
+		if (!mongoose.Types.ObjectId.isValid(userId))
+			return res.status(400).json({ message: 'Improper ID' });
+		if ((await User.findById(userId)) == null)
+			return res.status(400).json({ message: 'User does not exist' });
+		await Note.updateOne(
+			{ _id: noteId },
+			{ content },
+			function (err, result) {
+				if (err) console.log(err);
+				if (result.nModified === 1)
+					return res.status(200).json({ message: 'Success' });
+				if (result.n === 1)
+					return res.status(400).json({ message: 'Already updated' });
+				return res.status(400).json({ message: 'Cannot find notes' });
+			}
+		);
+
+		return res.status(400).json({ message: 'Cannot find notes' });
+	} catch (err) {
+		console.log(err.message);
+		return res.status(404).json('Server error. Try again later');
+	}
+});
 module.exports = notes;
